@@ -17,10 +17,15 @@
 
     <body>
         <div class="row">
-            <div class="coloum">
-                
+            <div class="nav">
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                    <li><a href="{% url 'logout' %}"}>Logout</a></li>
+                </ul>
             </div>
-            <div class="coloum">
+            <div class="content">
                 {% block content %}
                 
                 {% endblock content %}
@@ -28,3 +33,22 @@
         </div>
     </body>
 </html>
+
+<style>
+    .nav{
+        float: left;
+        width: 15%;
+        padding: 10px;
+    }
+    .content{
+        float: left;
+        width: 85%;
+        padding: 10px;
+    }
+    nav.ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+</style>

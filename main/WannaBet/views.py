@@ -1,9 +1,50 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth.models import User
+from django.urls import reverse
+from django.contrib.auth import login as auth_login
 # Create your views here.
 
 def index(request):
     return render(request, 'WannaBet/index.html')
 
+def logout_page(request):
+    logout(request)
+    return redirect(reverse('login'))
+
 def login(request):
-    return render(request, 'WannaBet/login.html')
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password') 
+        # Fetch the username from the user db
+        user = User.objects.filter(username=username)
+        # if there is a user we authenticate it or say oh no there isnt one 
+        if user.count()>=1:
+            user = authenticate(username = username, password = password)
+            if user:
+                if user.is_active:
+                    auth_login(request, user)
+                    return redirect(reverse('home'))
+            return render(request, 'WannaBet/login.html', context={'alert':'warning','alert_msg':'Username or Password did not match'})
+    return render(request,'WannaBet/login.html', context={"title":"login"})
+
+def register(request):
+    if request.method == "POST":        
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password') 
+        verify = request.POST.get('verify')
+
+        if password == verify:
+            if User.objects.filter(email=email).count() != 0:
+                return render(request, 'WannaBet/register.html', context={'alert':'warning','alert_msg':'An account has already been registered with this Email address!'})
+            if User.objects.filter(username=username).count() != 0:
+                return render(request, 'visiWannaBeton/register.html', context={'alert':'warning','alert_msg':'An account has already been registered with this Username!'})
+            user = User.objects.create_user(username=username, email= email, password = password)
+            return(render(request,'WannaBet/home.html'))
+
+    return render(request,'WannaBet/register.html')
+
+def home(request):
+    return render(request,'WannaBet/home.html')

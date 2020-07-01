@@ -15,7 +15,7 @@
     </head>
 
     <body>
-            {% block content %}
+        {% block content %}
             {% if alert %}
                 <div class="alert alert-{{ alert }}" role="alert">
                     <center>{{ alert_msg }}</center>
@@ -29,20 +29,26 @@
                             <div class="card-body">
         
                                 <div class="row justify-content-center">  
-                                    <form action="{% url 'login' %}"  method="POST">
+                                    <form action="{% url 'register' %}"  method="POST">
                                         {% csrf_token %} 
-                                        <h4 class="card-title text-center" style="padding-top: 20px; padding-bottom: 20px;">Login to your account</h4>
+                                        <h4 class="card-title text-center" style="padding-top: 20px; padding-bottom: 20px;">Register your student account</h4>
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Username</label>
                                             <input type="username" name="username" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Name" >
                                         </div>
-                                        
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Email address</label>
+                                            <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" >
+                                        </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Password</label>
                                             <input name="password" type="password" class="form-control" id="exampleInputPassword1" >
                                         </div>
-        
-                                        <center><input type="submit" name="" value="Login"></center>
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Password</label>
+                                            <input name="verify" type="password" class="form-control" id="exampleInputPassword2" >
+                                        </div> 
+                                    <center><input type="submit" name="" value="Register"></center>
                                     </form>
                                 </div>
                                 <br>
@@ -54,7 +60,7 @@
                 </div>
             </div>
                
-            {% endblock content %}
+        {% endblock content %}
     </body>
 </html>
 <style>
