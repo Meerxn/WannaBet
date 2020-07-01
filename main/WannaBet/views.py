@@ -3,12 +3,15 @@ from django.http import HttpResponse
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
+from WannaBet.models import Event
 # Create your views here.
 
 def index(request):
     return render(request, 'WannaBet/index.html')
 
+@login_required
 def logout_page(request):
     logout(request)
     return redirect(reverse('login'))
@@ -40,24 +43,30 @@ def register(request):
             if User.objects.filter(email=email).count() != 0:
                 return render(request, 'WannaBet/register.html', context={'alert':'warning','alert_msg':'An account has already been registered with this Email address!'})
             if User.objects.filter(username=username).count() != 0:
-                return render(request, 'visiWannaBeton/register.html', context={'alert':'warning','alert_msg':'An account has already been registered with this Username!'})
+                return render(request, 'WannaBeton/register.html', context={'alert':'warning','alert_msg':'An account has already been registered with this Username!'})
             user = User.objects.create_user(username=username, email= email, password = password)
             return(render(request,'WannaBet/home.html'))
 
     return render(request,'WannaBet/register.html')
 
+@login_required
 def home(request):
     return render(request,'WannaBet/home.html')
  
 
-# Create your views here.
-
-# This method is responsible  for creating a bet 
-# Need to know how to push a new bet to the back end 
-def createBet(request,code):
-    return
-
-
+# This is for events
+@login_required
+def create_event(request):
+    if request.method == "POST":
+        event_name = request.POST.get("event_name")
+        # time = re....
+        if all([event_name]):
+            event, created = Event.objects.get_or_create(name = event_name)
+            if created:
+                event.save()
+            return redirect(reverse('home'))
+    return render(request,'WannaBet/create_event.html')
+ 
 
 #This method is responsible for joining a bet using a code from generate code 
 def joinBet(request,code):   
@@ -72,8 +81,4 @@ def createCode(request):
 def follow(request): 
     return 
 
-
-
-# def login (request)
-# dont know if this needs a method     
 

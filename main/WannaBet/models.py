@@ -62,7 +62,7 @@ class Event(models.Model):
 
 class Bet(models.Model):
     event = models.ForeignKey(Event,null=True, on_delete=models.CASCADE)
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    identity = models.CharField(max_length = 7, blank = True)
     members = models.ManyToManyField(Profile, through='Sides', symmetrical=False)
     name = models.CharField(max_length = 30)
     descrition = models.TextField(blank=True)
@@ -79,16 +79,15 @@ class Bet(models.Model):
     type = models.CharField(max_length = 1, choices = choices_for_challanges, default="None")
    
 
-
     # Can generate 2 billion unique IDs
     def id_gen(size=6, chars=string.ascii_letters+ string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
 
     def save(self):
-        if not self.id:
-            self.id = f"#{id_gen()}"
-            while MyModel.objects.filter(id=self.id).exists():
-                self.id = f"#{id_gen()}"
+        if not self.identity:
+            self.identity = f"#{id_gen()}"
+            while Bet.objects.filter(id=self.identity).exists():
+                self.identity = f"#{id_gen()}"
         super(Bet, self).save()
 
 class Sides(models.Model):
