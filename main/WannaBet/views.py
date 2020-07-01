@@ -14,6 +14,7 @@ def logout_page(request):
     return redirect(reverse('login'))
 
 def login(request):
+<<<<<<< HEAD
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password') 
@@ -48,3 +49,36 @@ def register(request):
 
 def home(request):
     return render(request,'WannaBet/home.html')
+=======
+    return render(request, 'WannaBet/login.html')
+  
+
+# Create your views here.
+
+# This method is responsible  for creating a bet 
+# Need to know how to push a new bet to the back end 
+def createBet(request,code):
+    return
+
+
+
+#This method is responsible for joining a bet using a code from generate code 
+def joinBet(request,code):   
+    return 
+
+
+#This method is responsible for creating the code for joining a bet or creating a bet 
+def createCode(request):  
+    return  
+
+#follow another user method need to know how to import another user (graph algo model maybe needed )
+def follow(request): 
+    return 
+
+
+
+# def login (request)
+# dont know if this needs a method     
+
+
+>>>>>>> af58f968db13558ea4cc7b99210eba55aec81342
