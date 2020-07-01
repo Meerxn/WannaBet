@@ -49,9 +49,7 @@ def register(request):
 
 def home(request):
     return render(request,'WannaBet/home.html')
-=======
-    return render(request, 'WannaBet/login.html')
-  
+ 
 
 # Create your views here.
 
@@ -80,5 +78,3 @@ def follow(request):
 # def login (request)
 # dont know if this needs a method     
 
-
->>>>>>> af58f968db13558ea4cc7b99210eba55aec81342
