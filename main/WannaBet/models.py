@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import User
 import random
 import string
+from django.utils import timezone
 # Create your models here.
 
 # A profile can have many bets
@@ -46,11 +47,18 @@ class Relationship(models.Model):
     def get_followers(self):
         return self.get_related_to(RELATIONSHIP_FOLLOWING)
 
+
 # Add Event Details later
 class Event(models.Model):
     name = models.CharField(max_length = 30)
-    time = models.DateTimeField(blank=True)
+    time = models.DateTimeField(default=timezone.now)
     link = models.URLField(blank=True)
+
+    # categories = ['Sports', 'Gaming', 'Board games']
+    # types_of_events = ['Football', 'Basketball/']
+
+    # category = models.CharField(max_length = 280, choices = categories, default="Uncategorized")
+    # type_of_event = models.CharField(max_length = 280, choices = types_of_events, default="Uncategorized")
 
 class Bet(models.Model):
     event = models.ForeignKey(Event,null=True, on_delete=models.CASCADE)
