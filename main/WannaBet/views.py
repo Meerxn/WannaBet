@@ -14,7 +14,6 @@ def logout_page(request):
     return redirect(reverse('login'))
 
 def login(request):
-<<<<<<< HEAD
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password') 
