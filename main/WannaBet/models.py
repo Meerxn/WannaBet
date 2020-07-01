@@ -8,33 +8,68 @@ import string
 # A profile can have many bets
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE)
+    # For Following People 
+    relationships = models.ManyToManyField('self', through='Relationship', symmetrical=False, related_name='related_to')
 
     wins = models.IntegerField(default = 0)
     losses = models.IntegerField(default = 0)
-    profile_score = models.IntegerField(blank=True)
+
     
     # bets = models.ForeignKey(Bet, on_delete=models.CASCADE)
-    def score(self):
-        self.profile_score = (self.wins / self.wins + self.losses) * 100
-        super(Profile, self).save()
+
+RELATIONSHIP_FOLLOWING = 1
+RELATIONSHIP_BLOCKED = 2
+RELATIONSHIP_STATUSES = (
+    (RELATIONSHIP_FOLLOWING, 'Following'),
+    (RELATIONSHIP_BLOCKED, 'Blocked'),
+)
 
 
+class Relationship(models.Model):
+    from_profile = models.ForeignKey(Profile, related_name='from_people', on_delete=models.CASCADE)
+    to_profile = models.ForeignKey(Profile, related_name='to_people', on_delete=models.CASCADE)
+    status = models.IntegerField(choices=RELATIONSHIP_STATUSES)
+
+    def get_relationships(self, status):
+        return self.relationships.filter(
+            to_people__status=status,
+            to_people__from_profile=self)
+
+    def get_related_to(self, status):
+        return self.related_to.filter(
+            from_people__status=status,
+            from_people__to_profile=self)
+
+    def get_following(self):
+        return self.get_relationships(RELATIONSHIP_FOLLOWING)
+
+    def get_followers(self):
+        return self.get_related_to(RELATIONSHIP_FOLLOWING)
+
+# Add Event Details later
 class Event(models.Model):
     name = models.CharField(max_length = 30)
-    # type = 
-    # time = 
-    # outcome = 
+    time = models.DateTimeField(blank=True)
     link = models.URLField(blank=True)
 
 class Bet(models.Model):
     event = models.ForeignKey(Event,null=True, on_delete=models.CASCADE)
-   
-    name = models.CharField(max_length = 30)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    members = models.ManyToManyField(Profile, through='Sides', symmetrical=False)
+    name = models.CharField(max_length = 30)
+    descrition = models.TextField(blank=True)
+    
+
     url = models.URLField(blank = True)
-    # members = 
-    # challange = 
-    # event = 
+    
+    choices_for_challanges = [
+        ('M', 'Money'),
+        ('A', 'Activity'),
+        ('G', 'Gift')
+    ]
+    
+    type = models.CharField(max_length = 1, choices = choices_for_challanges, default="None")
+   
 
 
     # Can generate 2 billion unique IDs
@@ -48,17 +83,13 @@ class Bet(models.Model):
                 self.id = f"#{id_gen()}"
         super(Bet, self).save()
 
-
-class Challange(models.Model):
-    bet = models.ForeignKey(Bet, on_delete = models.CASCADE)
-    choices_for_challanges = [
-        ('M', 'Money'),
-        ('A', 'Activity'),
-        ('G', 'Gift')
+class Sides(models.Model):
+    profile = models.ForeignKey(Profile, on_delete = models.CASCADE)
+    bet = models.ForeignKey(Bet, on_delete= models.CASCADE, related_name="side_choices")
+    choices_for_sides = [
+        ('W', 'Win'),
+        ('L', 'Loss'),
+        ('D', 'Draw')
     ]
     
-    name = models.CharField(max_length = 30)
-    type = models.CharField(max_length = 1, choices = choices_for_challanges)
-    descrition = models.TextField()
-
-
+    side = models.CharField(max_length = 1, choices = choices_for_sides)
