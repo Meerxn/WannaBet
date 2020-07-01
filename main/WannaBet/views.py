@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from WannaBet.models import Event
+from WannaBet.models import Bet
 # Create your views here.
 
 def index(request):
@@ -69,8 +70,18 @@ def create_event(request):
  
 
 #This method is responsible for joining a bet using a code from generate code 
-def joinBet(request,code):   
-    return 
+
+def create_bet(request):   
+ if request.method == "POST":
+    bet_name = request.POST.get("bet_name")
+     
+    if all([bet_name]):
+     bet, created = Bet.objects.get_or_create(name = bet_name)
+     if created:
+        bet.save()
+     return redirect(reverse('home'))
+ return render(request,'WannaBet/create_bet.html')
+     
 
 
 #This method is responsible for creating the code for joining a bet or creating a bet 

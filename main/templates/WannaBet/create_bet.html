@@ -1,0 +1,32 @@
+{% extends 'WannaBet/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<form action="{% url 'create_bet' %}"  method="POST">
+    {% csrf_token %} 
+    <div class="form-group">
+        <label for="exampleInputEmail1">betName</label>
+        <input type="username" name="bet_name" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Name" >
+      
+
+        
+
+    </div>
+    <input type="submit" name="" value="Register">
+</form>
+
+
+{% endblock %}
+
+<style>
+
+</style>
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker1').datetimepicker();
+    });
+</script>
