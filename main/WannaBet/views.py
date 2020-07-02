@@ -5,14 +5,13 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
-from WannaBet.models import Event
-from WannaBet.models import Bet
+from WannaBet.models import Event, Bet, Profile, Sides, Relationship
+
 # Create your views here.
 
 def index(request):
     return render(request, 'WannaBet/index.html')
 
-@login_required
 def logout_page(request):
     logout(request)
     return redirect(reverse('login'))
@@ -70,18 +69,32 @@ def create_event(request):
  
 
 #This method is responsible for joining a bet using a code from generate code 
-
+@login_required
 def create_bet(request):   
- if request.method == "POST":
-    bet_name = request.POST.get("bet_name")
-     
-    if all([bet_name]):
-     bet, created = Bet.objects.get_or_create(name = bet_name)
-     if created:
-        bet.save()
-     return redirect(reverse('home'))
- return render(request,'WannaBet/create_bet.html')
-     
+    events = Event.objects.all()
+    context = {"events":[x for x in events]}
+    # Add Authenticated models
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            event_name = request.POST.get("event_name")
+            bet_name = request.POST.get("bet_name")
+            
+            if all([bet_name, event_name]):
+                profile = Profile.objects.filter(user = request.user).get()
+                event = Event.objects.filter(name = "Trial")[0]
+                bet, created = Bet.objects.get_or_create(event= event)
+                sides, recreated = Sides.objects.get_or_create(profile = profile)
+                if recreated:
+                    sides.bet =  bet
+                    sides.side = 'Win'
+                    side.save()
+                if created:
+                    bet.name = bet_name
+                    bet.members = profile
+                    bet.save()
+                return redirect(reverse('home'))
+    return render(request,'WannaBet/create_bet.html', context=context)
+        
 
 
 #This method is responsible for creating the code for joining a bet or creating a bet 

@@ -33,6 +33,9 @@ STATICFILES_DIRS = [STATIC_DIR, ]
 
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
+
+AUTH_PROFILE_MODULE = 'WannaBet.Profile'
+
 # Application definition
 
 INSTALLED_APPS = [

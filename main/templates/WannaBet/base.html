@@ -18,11 +18,18 @@
     <body>
         <div class="row">
             <div class="nav">
+                
                 <ul>
+                  <li><a >  {{ user }}</a></li>
                     <li><a href="{% url 'home' %}">Home</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li><a href="{% url 'create_bet' %}">Create Bet</a></li>
+                    <li><a href="{% url 'create_event' %}">Create Event</a></li>
+                    {% else %}
                     <li><a href="{% url 'login' %}">Login</a></li>
                     <li><a href="{% url 'register' %}">Register</a></li>
-                    <li><a href="{% url 'logout' %}"}>Logout</a></li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="content">

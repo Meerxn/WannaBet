@@ -61,13 +61,13 @@ class Event(models.Model):
     # type_of_event = models.CharField(max_length = 280, choices = types_of_events, default="Uncategorized")
 
 class Bet(models.Model):
-    event = models.ForeignKey(Event,null=True, on_delete=models.CASCADE)
-    identity = models.CharField(max_length = 7, blank = True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     members = models.ManyToManyField(Profile, through='Sides', symmetrical=False)
     name = models.CharField(max_length = 30)
     descrition = models.TextField(blank=True)
+    identifier = models.CharField(max_length = 7, blank = True)
     
-
+    
     url = models.URLField(blank = True)
     
     choices_for_challanges = [
@@ -80,15 +80,16 @@ class Bet(models.Model):
    
 
     # Can generate 2 billion unique IDs
-    def id_gen(size=6, chars=string.ascii_letters+ string.digits):
+    def idgen(size=6, chars=string.ascii_letters+ string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
 
-    def save(self):
-        if not self.identity:
-            self.identity = f"#{id_gen()}"
-            while Bet.objects.filter(id=self.identity).exists():
-                self.identity = f"#{id_gen()}"
-        super(Bet, self).save()
+    def save(self, *args, **kwargs):
+        super(Bet, self).save(*args, **kwargs)
+        if not self.identifier:
+            self.identifier = f"{chr(35)}{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
+            while Bet.objects.filter(identifier=self.identifier).exists():
+                self.identifier = f"{chr(35)}{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
+        super(Bet, self).save(*args, **kwargs)
 
 class Sides(models.Model):
     profile = models.ForeignKey(Profile, on_delete = models.CASCADE)
