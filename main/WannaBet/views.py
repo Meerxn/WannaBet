@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
-from WannaBet.models import Event, Bet, Profile, Sides, Relationship
+from WannaBet.models import Event, Bet, Profile, Relationship
 
 # Create your views here.
 
@@ -43,15 +43,26 @@ def register(request):
             if User.objects.filter(email=email).count() != 0:
                 return render(request, 'WannaBet/register.html', context={'alert':'warning','alert_msg':'An account has already been registered with this Email address!'})
             if User.objects.filter(username=username).count() != 0:
-                return render(request, 'WannaBeton/register.html', context={'alert':'warning','alert_msg':'An account has already been registered with this Username!'})
+                return render(request, 'WannaBet/register.html', context={'alert':'warning','alert_msg':'An account has already been registered with this Username!'})
+
             user = User.objects.create_user(username=username, email= email, password = password)
+            profile, create = Profile.objects.get_or_create(user = user)
+            if create:
+                profile.save()
             return(render(request,'WannaBet/home.html'))
 
     return render(request,'WannaBet/register.html')
 
 @login_required
 def home(request):
-    return render(request,'WannaBet/home.html')
+    choices_for_sides = {'W':'Win', "L":"Lose", "D":"Draw"}
+
+    
+    events = Event.objects.all()
+    profile = Profile.objects.filter(user = request.user).get()
+    bets = Bet.objects.filter(members = profile)
+    context = {"bets":[x for x in bets], "choices_for_sides":choices_for_sides }
+    return render(request,'WannaBet/home.html', context=context)
  
 
 # This is for events
@@ -80,14 +91,14 @@ def create_bet(request):
             bet_name = request.POST.get("bet_name")
             
             if all([bet_name, event_name]):
-                profile = Profile.objects.filter(user = request.user).get()
+                profile = Profile.objects.filter(user = request.user)
                 event = Event.objects.filter(name = "Trial")[0]
                 bet, created = Bet.objects.get_or_create(event= event)
-                sides, recreated = Sides.objects.get_or_create(profile = profile)
-                if recreated:
-                    sides.bet =  bet
-                    sides.side = 'Win'
-                    side.save()
+                # sides, recreated = Sides.objects.get_or_create(profile = profile)
+                # if recreated:
+                #     sides.bet =  bet
+                #     sides.side = 'Win'
+                #     side.save()
                 if created:
                     bet.name = bet_name
                     bet.members = profile

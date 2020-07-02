@@ -1,6 +1,7 @@
 from django.contrib import admin
 from WannaBet.models import Profile, Bet, Event, Relationship, Sides
 # Register your models here.
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 class RelationshipInline(admin.StackedInline):
     model = Relationship
@@ -10,14 +11,20 @@ class ProfileAdmin(admin.ModelAdmin):
     inlines = [RelationshipInline]
 
 # class SidesInline(admin.StackedInline):
-#     model = Bet
-#     name= "side_choices"
+#     model = Sides
 
-# class BetAdmin(admin.ModelAdmin):
-#     inlines = [SidesInline]
+class SidesInline(admin.TabularInline):
+    model = Bet.side.through
+    extra = 3
+
+class BetAdmin(admin.ModelAdmin):
+   inlines = (
+        SidesInline,
+        )
 
 admin.site.register(Profile, ProfileAdmin)
-admin.site.register(Bet)
+
+admin.site.register(Bet, BetAdmin)
 admin.site.register(Sides)
 admin.site.register(Event)
 

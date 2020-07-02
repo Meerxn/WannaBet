@@ -3,7 +3,22 @@
 {% load static %}
 
 {% block content %}
- Its me Home
+    {% for b in bets %}
+
+        <div class="card" style="width: 50rem;">
+            
+            <div class="card-body">
+              <h5 class="card-title"> {{ b.name }}</h5>
+              <p class="card-text">{{ b.members}} ,  {{ b.event.name }}
+                  <br>
+                {{ b.side }}
+              </p>
+
+              <a href="#" class="btn btn-primary">{{ b.identifier }}</a>
+            </div>
+        </div>
+        <br>
+    {% endfor %}
 {% endblock %}
 
 <style>
