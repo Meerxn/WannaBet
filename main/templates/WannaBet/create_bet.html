@@ -6,17 +6,24 @@
 <form action="{% url 'create_bet' %}"  method="POST">
     {% csrf_token %} 
     <div class="form-group">
-
+        <label for="exampleInputEmail1">betName</label>
+        <input type="username" name="bet_name" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Name" >
+      
         <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Choose Event</label>
         <select class="custom-select my-1 mr-sm-2"  name="event_name" id="inlineFormCustomSelectPref">
           <option selected>Choose...</option>
           {% for e in events %}
-          <option value="1">{{ e.name }}</option>
+          <option value="{{ e.name }}">{{ e.name }}</option>
           {% endfor %}
         </select>
-        <label for="exampleInputEmail1">betName</label>
-        <input type="username" name="bet_name" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Name" >
-      
+        <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Choose Side</label>
+        <select class="custom-select my-1 mr-sm-2"  name="bet_side" id="inlineFormCustomSelectPref">
+            <option selected>Choose...</option>
+            <option value="W">Win</option>
+            <option value="L">Loss</option>
+            <option value="D">Draw</option>
+          </select>
+        
 
         
 

@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 import random
 import string
 from django.utils import timezone
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 # Create your models here.
 
 # A profile can have many bets
@@ -65,7 +67,7 @@ class Bet(models.Model):
     # members = models.ManyToManyField(User, related_name="bet_member")
     name = models.CharField(max_length = 30)
     descrition = models.TextField(blank=True)
-    identifier = models.CharField(max_length = 7, blank = True)
+    identifier = models.UUIDField(default=uuid.uuid4, editable=True, unique=True)
     side = models.ManyToManyField(User, through='Sides', related_name="side_to")
     
     url = models.URLField(blank = True)
@@ -83,22 +85,23 @@ class Bet(models.Model):
     ]
 
     
-    def get_members(self):
-        return self.members
+
 
     type = models.CharField(max_length = 1, choices = choices_for_challanges, default="None")
     
     # Can generate 2 billion unique IDs
     def idgen(size=6, chars=string.ascii_letters+ string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
+ 
+    # def save(self, *args, **kwargs):
+    #     super(Bet, self).save(*args, **kwargs)
+    #     if not self.identifier:
+    #         self.identifier = f"{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
+    #         while Bet.objects.filter(identifier=self.identifier).exists():
+    #             self.identifier = f"{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
+    #     super(Bet, self).save(*args, **kwargs)
+    
 
-    def save(self, *args, **kwargs):
-        super(Bet, self).save(*args, **kwargs)
-        if not self.identifier:
-            self.identifier = f"{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
-            while Bet.objects.filter(identifier=self.identifier).exists():
-                self.identifier = f"{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
-        super(Bet, self).save(*args, **kwargs)
 
 class Sides(models.Model):
     profile = models.ForeignKey(User, on_delete = models.CASCADE)

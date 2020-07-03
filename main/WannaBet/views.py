@@ -1,3 +1,5 @@
+import random
+import string
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import logout, authenticate, login
@@ -5,7 +7,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
-from WannaBet.models import Event, Bet, Profile, Relationship
+from WannaBet.models import Event, Bet, Profile, Relationship, Sides
 from django.http import HttpResponseNotFound
 
 # Create your views here.
@@ -50,7 +52,7 @@ def register(request):
             profile, create = Profile.objects.get_or_create(user = user)
             if create:
                 profile.save()
-            return(render(request,'WannaBet/home.html'))
+            return(render(request,'WannaBet/login.html'))
 
     return render(request,'WannaBet/register.html')
 
@@ -92,32 +94,46 @@ def create_bet(request):
         if request.method == "POST":
             event_name = request.POST.get("event_name")
             bet_name = request.POST.get("bet_name")
-            
+            user_side = request.POST.get("bet_side")
             if all([bet_name, event_name]):
-                profile = Profile.objects.filter(user = request.user)
-                event = Event.objects.filter(name = "Trial")[0]
-                bet, created = Bet.objects.get_or_create(event= event)
-                # sides, recreated = Sides.objects.get_or_create(profile = profile)
-                # if recreated:
-                #     sides.bet =  bet
-                #     sides.side = 'Win'
-                #     side.save()
+                event = Event.objects.filter(name = event_name)[0]
+                bet, created = Bet.objects.get_or_create(name = bet_name)
+                
                 if created:
-                    bet.name = bet_name
-                    bet.members = profile
+                    bet.event = event
                     bet.save()
+                side, made = Sides.objects.get_or_create(profile = request.user, bet = bet)
+                if made:
+                    
+                    side.side = user_side    
+                    side.save()
                 return redirect(reverse('home'))
     return render(request,'WannaBet/create_bet.html', context=context)
         
-
+# Shows information about the bet
 def bet_page(request, bet_code):
-    bet = Bet.objects.filter(identifier = str(bet_code))
+    bet = Bet.objects.filter(identifier = bet_code)
     if bet.count()>0:
         bet = bet.get()
     else:
         return HttpResponseNotFound("<h1>Page Not Found</h1>")
     context = {"bet":bet}
     return render(request, 'WannaBet/bet.html', context=context)
+
+def join_bet(request,bet_code):
+    bet = Bet.objects.filter(identifier = bet_code)
+    if bet.count()>0:
+        bet = bet.get()
+    else:
+        return HttpResponseNotFound("<h1>Bet Not Found</h1>")
+    if request.method == "POST":
+        bet_side = request.POST.get("bet_side")
+        side, made = Sides.objects.get_or_create(profile = request.user, bet = bet)
+        if made:
+            side.side = bet_side
+            side.save()
+        return redirect(reverse(f'home'))
+    return render(request, 'WannaBet/join_bet.html', context={"bet":bet})    
 
 #follow another user method need to know how to import another user (graph algo model maybe needed )
 def follow(request): 

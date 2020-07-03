@@ -1,0 +1,31 @@
+{% extends 'WannaBet/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<form action="{% url 'join_bet' bet.identifier %}"  method="POST">
+    {% csrf_token %} 
+    <div class="form-group">
+        <label for="exampleInputEmail1">betName</label>
+        <h1>{{ bet.name }}</h1>
+    
+        <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Choose Side</label>
+        <select class="custom-select my-1 mr-sm-2"  name="bet_side" id="inlineFormCustomSelectPref">
+            <option selected>Choose...</option>
+            <option value="W">Win</option>
+            <option value="L">Loss</option>
+            <option value="D">Draw</option>
+        </select>
+        <input type="submit" name="" value="Register">
+    </div>
+</form>
+{% endblock %}
+
+<style>
+
+</style>
+
+
+<script>
+
+<\script>
