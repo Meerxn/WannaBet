@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from WannaBet.models import Event, Bet, Profile, Relationship
+from django.http import HttpResponseNotFound
 
 # Create your views here.
 
@@ -57,11 +58,13 @@ def register(request):
 def home(request):
     choices_for_sides = {'W':'Win', "L":"Lose", "D":"Draw"}
 
-    
+            
     events = Event.objects.all()
     profile = Profile.objects.filter(user = request.user).get()
-    bets = Bet.objects.filter(members = profile)
-    context = {"bets":[x for x in bets], "choices_for_sides":choices_for_sides }
+    bets = Bet.objects.filter(members = request.user)
+    # sides = Sides.objects.filter(bet = bets)
+    # betters_profiles = [Profile.objects.filter(x.members).get() for x in bets]
+    context = {"bets":[x for x in bets]}
     return render(request,'WannaBet/home.html', context=context)
  
 
@@ -107,10 +110,14 @@ def create_bet(request):
     return render(request,'WannaBet/create_bet.html', context=context)
         
 
-
-#This method is responsible for creating the code for joining a bet or creating a bet 
-def createCode(request):  
-    return  
+def bet_page(request, bet_code):
+    bet = Bet.objects.filter(identifier = str(bet_code))
+    if bet.count()>0:
+        bet = bet.get()
+    else:
+        return HttpResponseNotFound("<h1>Page Not Found</h1>")
+    context = {"bet":bet}
+    return render(request, 'WannaBet/bet.html', context=context)
 
 #follow another user method need to know how to import another user (graph algo model maybe needed )
 def follow(request): 

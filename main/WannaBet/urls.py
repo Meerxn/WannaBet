@@ -10,4 +10,5 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('create_event/', views.create_event, name='create_event'),
     path('create_bet/',views.create_bet, name = 'create_bet'),
+    path('bet/<path:bet_code>', views.bet_page, name='bet')
 ]

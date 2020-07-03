@@ -62,11 +62,11 @@ class Event(models.Model):
 
 class Bet(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="for_event", null = True)
-    members = models.ManyToManyField(Profile, related_name="bet_member")
+    members = models.ManyToManyField(User, related_name="bet_member")
     name = models.CharField(max_length = 30)
     descrition = models.TextField(blank=True)
     identifier = models.CharField(max_length = 7, blank = True)
-    side = models.ManyToManyField(Profile, through='Sides', related_name="side_to")
+    side = models.ManyToManyField(User, through='Sides', related_name="side_to")
     
     url = models.URLField(blank = True)
     
@@ -81,8 +81,12 @@ class Bet(models.Model):
         ('L', 'Loss'),
         ('D', 'Draw')
     ]
+
     
-    
+    def get_members(self):
+        return self.members
+
+
     type = models.CharField(max_length = 1, choices = choices_for_challanges, default="None")
     
 
@@ -90,18 +94,18 @@ class Bet(models.Model):
     def idgen(size=6, chars=string.ascii_letters+ string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
 
-    
+
 
     def save(self, *args, **kwargs):
         super(Bet, self).save(*args, **kwargs)
         if not self.identifier:
-            self.identifier = f"{chr(35)}{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
+            self.identifier = f"{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
             while Bet.objects.filter(identifier=self.identifier).exists():
-                self.identifier = f"{chr(35)}{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
+                self.identifier = f"{(''.join(random.choice(string.ascii_letters+ string.digits) for _ in range(6)))}"
         super(Bet, self).save(*args, **kwargs)
 
 class Sides(models.Model):
-    profile = models.ForeignKey(Profile, on_delete = models.CASCADE)
+    profile = models.ForeignKey(User, on_delete = models.CASCADE)
     bet = models.ForeignKey(Bet, on_delete= models.CASCADE, related_name="side_choices")
     choices_for_sides = [
         ('W', 'Win'),
