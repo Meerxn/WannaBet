@@ -61,7 +61,7 @@ def home(request):
             
     events = Event.objects.all()
     profile = Profile.objects.filter(user = request.user).get()
-    bets = Bet.objects.filter(members = request.user)
+    bets = Bet.objects.filter(side = request.user)
     # sides = Sides.objects.filter(bet = bets)
     # betters_profiles = [Profile.objects.filter(x.members).get() for x in bets]
     context = {"bets":[x for x in bets]}

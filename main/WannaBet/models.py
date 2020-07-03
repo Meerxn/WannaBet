@@ -62,7 +62,7 @@ class Event(models.Model):
 
 class Bet(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="for_event", null = True)
-    members = models.ManyToManyField(User, related_name="bet_member")
+    # members = models.ManyToManyField(User, related_name="bet_member")
     name = models.CharField(max_length = 30)
     descrition = models.TextField(blank=True)
     identifier = models.CharField(max_length = 7, blank = True)
@@ -86,15 +86,11 @@ class Bet(models.Model):
     def get_members(self):
         return self.members
 
-
     type = models.CharField(max_length = 1, choices = choices_for_challanges, default="None")
     
-
     # Can generate 2 billion unique IDs
     def idgen(size=6, chars=string.ascii_letters+ string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
-
-
 
     def save(self, *args, **kwargs):
         super(Bet, self).save(*args, **kwargs)
