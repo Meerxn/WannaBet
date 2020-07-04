@@ -79,8 +79,8 @@ class Bet(models.Model):
     ]
     
     choices_for_sides = [
-        ('W', 'Win'),
-        ('L', 'Loss'),
+        ('t1', 'Team One Wins '),
+        ('t2', 'Team Two Wins'),
         ('D', 'Draw')
     ]
 
