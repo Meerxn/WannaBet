@@ -55,8 +55,8 @@ class Event(models.Model):
     name = models.CharField(max_length = 30)
     time = models.DateTimeField(default=timezone.now)
     # Team 1 : Team 2 = "Team1:Team2"
-    teams = models.TextField(max_length=none)
-    scores = models.TextField(max_length=none)
+    teams = models.TextField(blank=True)
+    scores = models.TextField(blank=True)
     link = models.URLField(blank=True)
 
     # categories = ['Sports', 'Gaming', 'Board games']
