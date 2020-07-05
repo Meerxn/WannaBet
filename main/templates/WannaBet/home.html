@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block content %}
+<div class="container">
     {% for b in bets %}
 
         <div class="card" style="width: 50rem;">
@@ -20,10 +21,13 @@
         </div>
         <br>
     {% endfor %}
+</div>
 {% endblock %}
 
 <style>
-
+ .container{
+        background-color: #1f1f1f;
+    }
 </style>
 
 

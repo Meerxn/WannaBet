@@ -17,21 +17,25 @@
 
     <body>
         <div class="row">
-            <div class="nav">
+            <nav id="sidebar" class="color-main">
+                <div class="sidebar-header">
+                    <a href="{% url 'home' %}">WannaBet</a>
+                </div>
                 
-                <ul>
-                  <li><a >  {{ user }}</a></li>
+                <hr width="75%">
+                {% if user.is_authenticated %}
+                <ul class = 'list-unstyled nav-links'>
+                    <!-- <li><center><a >  {{ user }}</a></center></li> -->
                     <li><a href="{% url 'home' %}">Home</a></li>
-                    {% if user.is_authenticated %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
                     <li><a href="{% url 'create_event' %}">Create Event</a></li>
-                    <li><a href="{% url 'create_bet' %}">Create Bet</a></li>                    
-                    {% else %}
+                    <li><a href="{% url 'create_bet' %}">Create Bet</a></li>   
+                    <li><a href="{% url 'logout' %}">Logout</a></li>                 
+                {% else %}
                     <li><a href="{% url 'login' %}">Login</a></li>
                     <li><a href="{% url 'register' %}">Register</a></li>
-                    {% endif %}
+                {% endif %}
                 </ul>
-            </div>
+            </nav>
             <div class="content">
                 {% block content %}
                 
@@ -40,22 +44,66 @@
         </div>
     </body>
 </html>
-
 <style>
-    .nav{
-        float: left;
-        width: 15%;
-        padding: 10px;
+    
+
+    #sidebar.active {
+        margin-left: -250px;
     }
+
+    .color-main {
+        background:#1f1f1f !important;
+        border-color: #1f1f1f !important;
+    }
+
+    .sidebar-header {
+        text-align:center;
+        padding-top:50px;
+    }
+    
+    .sidebar-header a {
+        font-weight:bold;
+        text-decoration: none;
+        color:#fff;
+        font-size:35px;
+    }
+        
+    .nav-links {
+        text-align:left;
+        padding-left: 35%;
+        padding-top: 30%;
+    }
+
+    .nav-links li {
+        margin-top:10px;
+        margin-bottom:10px;
+    }
+
+    .nav-links a {
+        font-size:20px;
+        color:#fff;
+        text-decoration: none;
+    }
+  
     .content{
         float: left;
         width: 85%;
         padding: 10px;
+        padding-top: 60px;
+        background-color: #1f1f1f;
     }
-    nav.ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
+
+    #sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    margin-left: 0;
+    
+    color: #fff;
+    transition: margin-left 0.5s;
     }
+
+
+
 
 </style>
